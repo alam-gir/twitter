@@ -15,7 +15,7 @@ import {
 
 const Sidebar = () => {
   return (
-    <div className="hidden sm:flex flex-col p-2 xl:items-start fixed h-screen">
+    <div className="hidden sm:flex flex-col p-2 xl:items-start sticky top-0 h-screen">
       {/* {twitter logo} */}
       <div className="hoverEffect p-0">
         <Image
