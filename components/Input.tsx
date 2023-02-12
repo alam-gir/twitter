@@ -20,8 +20,8 @@ const Input = () => {
         </div>
         <div className="flex justify-between items-center">
           <div className="flex">
-            <PhotoIcon className="h-11 w-11 hoverEffect p-2 text-sky-500 hover:text-sky-100" />
-            <FaceSmileIcon className="h-11 w-11 hoverEffect p-2 text-sky-500 hover:text-sky-100" />
+            <PhotoIcon className="h-11 w-11 hoverEffect p-2 text-sky-500 hover:text-sky-400" />
+            <FaceSmileIcon className="h-11 w-11 hoverEffect p-2 text-sky-500 hover:text-sky-400" />
           </div>
           <button className="capitalize bg-blue-400 text-white px-4 py-1.5 rounded-full font-bold shadow-md hover:brightness-95 disabled:opacity-50">
             tweet
