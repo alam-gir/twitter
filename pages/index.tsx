@@ -2,8 +2,11 @@ import Feed from "@/components/Feed";
 import Sidebar from "@/components/Sidebar";
 import Widgets from "@/components/Widgets";
 import Head from "next/head";
+interface HomeProps {
+  newsResults: any;
+}
 
-const Home = () => {
+const Home = ({ newsResults: { articles } }: HomeProps) => {
   return (
     <div>
       <Head>
@@ -17,7 +20,7 @@ const Home = () => {
         <Feed />
 
         {/* {widgets}   */}
-        <Widgets />
+        <Widgets articles={articles} />
 
         {/* {modals} */}
       </main>
@@ -26,3 +29,16 @@ const Home = () => {
 };
 
 export default Home;
+
+export const getServerSideProps = async () => {
+  const newses = await fetch(
+    "https://saurav.tech/NewsAPI/top-headlines/category/business/us.json"
+  );
+  const data = await newses.json();
+
+  return {
+    props: {
+      newsResults: data,
+    },
+  };
+};
