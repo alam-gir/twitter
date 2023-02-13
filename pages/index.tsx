@@ -4,9 +4,13 @@ import Widgets from "@/components/Widgets";
 import Head from "next/head";
 interface HomeProps {
   newsResults: any;
+  usersResults: any;
 }
 
-const Home = ({ newsResults: { articles } }: HomeProps) => {
+const Home = ({
+  newsResults: { articles },
+  usersResults: { results: users },
+}: HomeProps) => {
   return (
     <div>
       <Head>
@@ -20,7 +24,7 @@ const Home = ({ newsResults: { articles } }: HomeProps) => {
         <Feed />
 
         {/* {widgets}   */}
-        <Widgets articles={articles} />
+        <Widgets articles={articles} users={users} />
 
         {/* {modals} */}
       </main>
@@ -34,11 +38,15 @@ export const getServerSideProps = async () => {
   const newses = await fetch(
     "https://saurav.tech/NewsAPI/top-headlines/category/business/us.json"
   );
-  const data = await newses.json();
-
+  const users = await fetch(
+    "https://randomuser.me/api/?results=600&inc=name,login,picture&noinfo"
+  );
+  const dataOfNewses = await newses.json();
+  const dataOfUsers = await users.json();
   return {
     props: {
-      newsResults: data,
+      newsResults: dataOfNewses,
+      usersResults: dataOfUsers,
     },
   };
 };
