@@ -1,5 +1,5 @@
 import React from "react";
-import { ArticleI } from "./Widgets";
+import { ArticleI } from "@/types/INTERFACES";
 interface NewsProps {
   article: ArticleI;
 }
