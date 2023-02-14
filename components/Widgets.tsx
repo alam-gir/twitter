@@ -1,8 +1,5 @@
 import { ArticleI, UserI } from "@/types/INTERFACES";
-import {
-  MagnifyingGlassCircleIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import News from "./News";
