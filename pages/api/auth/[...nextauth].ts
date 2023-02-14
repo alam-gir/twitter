@@ -18,8 +18,9 @@ export const authOptions = {
   pages: {
     signIn: "/auth/signin",
   },
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async session({ session, token, user }: any) {
+    async session({ session, token }: any) {
       session.user.username = session.user.name
         .split(" ")
         .join("")
