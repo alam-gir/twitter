@@ -8,10 +8,19 @@ interface SidebarMenuItemsProps {
   >;
   text: string;
   active: boolean;
+  clickHandler?: () => void;
 }
-const SidebarMenuItem = ({ Icon, text, active }: SidebarMenuItemsProps) => {
+const SidebarMenuItem = ({
+  Icon,
+  text,
+  active,
+  clickHandler,
+}: SidebarMenuItemsProps) => {
   return (
-    <div className="hoverEffect flex items-center text-gray-700 justify-center xl:justify-start text-lg space-x-3">
+    <div
+      onClick={clickHandler}
+      className="hoverEffect flex items-center text-gray-700 justify-center xl:justify-start text-lg space-x-3"
+    >
       <Icon className="h-7 w-auto" />
       <span className={`${active && "font-bold"} capitalize hidden xl:inline`}>
         {text}

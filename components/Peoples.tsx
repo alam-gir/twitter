@@ -26,7 +26,7 @@ const Peoples = ({ user }: PeoplseI) => {
           </h4>
           <p className="text-[10px] text-gray-500">@{user.login.username}</p>
         </div>
-        <button className=" col-span-3 bg-blue-400 p-1 text-sm text-white capitalize hover:shadow-md hover:bg-blue-300">
+        <button className=" col-span-3 bg-blue-400 p-1 text-sm text-white capitalize hover:shadow-md hover:bg-blue-300 rounded">
           follow
         </button>
       </div>
