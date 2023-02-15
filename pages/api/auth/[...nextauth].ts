@@ -1,26 +1,22 @@
-import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
-import NextAuth from "next-auth/next";
+import NextAuth, { Profile, Session } from "next-auth";
+import { OAuthConfig } from "next-auth/providers";
+import GithubProvider from "next-auth/providers/github";
 export const authOptions = {
   // Configure one or more authentication providers
   providers: [
+    GithubProvider({
+      clientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.NEXT_PUBLIC_GITHUB_CLIENT_SECRET as string,
+    }) as OAuthConfig<Profile>,
     // ...add more providers here
-    GitHubProvider({
-      clientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
-      clientSecret: process.env.NEXT_PUBLIC_GITHUB_CLIENT_SECRET,
-    }),
-    GoogleProvider({
-      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-      clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
-    }),
   ],
-
+  // ...add Pages
   pages: {
     signIn: "/auth/signin",
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.SECRET,
   callbacks: {
-    async session({ session, token }: any) {
+    async session({ session, token }: { session: Session; token: any }) {
       session.user.username = session.user.name
         .split(" ")
         .join("")

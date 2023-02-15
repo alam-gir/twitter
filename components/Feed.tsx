@@ -1,9 +1,7 @@
 import { ArrowLeftCircleIcon, SparklesIcon } from "@heroicons/react/24/outline";
-import { useSession, signIn } from "next-auth/react";
 import React from "react";
 import Input from "./Input";
 import Post from "./Post";
-import SidebarMenuItem from "./SidebarMenuItem";
 
 const Feed = () => {
   const posts = [
@@ -38,7 +36,6 @@ const Feed = () => {
       timestamp: "2 days age",
     },
   ];
-  const { data: session } = useSession();
   return (
     <div className="flex flex-col border border-gray-200 relative w-full">
       <div
@@ -49,20 +46,14 @@ const Feed = () => {
           home
         </h2>
         <div>
-          {session ? (
-            <SparklesIcon className="hoverEffect h-10 w-10 p-2 text-gray-700" />
-          ) : (
-            <SidebarMenuItem
-              text="login"
-              Icon={ArrowLeftCircleIcon}
-              active={false}
-              clickHandler={signIn}
-            />
-          )}
+          <SparklesIcon className="hoverEffect h-10 w-10 p-2 text-gray-700" />
         </div>
       </div>
       {/* {INPUT } */}
-      <div>{session && <Input />}</div>
+      <div>
+        {" "}
+        <Input />{" "}
+      </div>
 
       {/* {post } */}
       <div>
