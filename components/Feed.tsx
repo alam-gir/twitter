@@ -2,7 +2,8 @@ import { ArrowLeftCircleIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import Input from "./Input";
 import Post from "./Post";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import SidebarMenuItem from "./SidebarMenuItem";
 
 const Feed = () => {
   const { data } = useSession();
@@ -48,7 +49,16 @@ const Feed = () => {
           home
         </h2>
         <div>
-          <SparklesIcon className="hoverEffect h-10 w-10 p-2 text-gray-700" />
+          {data ? (
+            <SparklesIcon className="hoverEffect h-10 w-10 p-2 text-gray-700" />
+          ) : (
+            <SidebarMenuItem
+              Icon={ArrowLeftCircleIcon}
+              text={"Sign In"}
+              clickHandler={signIn}
+              active={false}
+            />
+          )}
         </div>
       </div>
       {/* {INPUT } */}
