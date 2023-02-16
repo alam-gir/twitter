@@ -97,16 +97,6 @@ const Feed = () => {
       <div>
         <div>
           {posts.map((post, index) => (
-            // <Post
-            //   key={post.data().uid}
-            //   uid={post.data().uid}
-            //   name={post.data().name}
-            //   username={post.data().username}
-            //   userImg={post.data().userImg}
-            //   image={post.data().image}
-            //   text={post.data().text}
-            //   timestamp={post.data().timestamp}
-            // />
             <Post
               key={index}
               uid={post?.data()?.uid}
@@ -115,6 +105,7 @@ const Feed = () => {
               userImg={post?.data().userImage}
               text={post?.data().text}
               image={post?.data()?.image}
+              timestamp={post?.data()?.timestamp}
             />
           ))}
         </div>

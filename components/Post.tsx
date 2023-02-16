@@ -6,8 +6,8 @@ import {
   ShareIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { DocumentData } from "firebase/firestore";
 import React from "react";
+import Moment from "react-moment";
 interface PostProps {
   uid: string;
   name: string;
@@ -15,7 +15,7 @@ interface PostProps {
   userImg: string;
   image?: string;
   text?: string;
-  timestamp?: string;
+  timestamp?: any;
 }
 const Post = ({
   uid,
@@ -50,7 +50,9 @@ const Post = ({
             <span className=" text-sm sm:text-[15px] hover:underline cursor-pointer">
               @{username}
             </span>
-            <span className=" text-sm sm:text-[15px] ">- {timestamp}</span>
+            <span className=" text-sm sm:text-[15px] ">
+              - <Moment fromNow>{timestamp.toDate()}</Moment>
+            </span>
           </div>
           {/* dot icon  */}
           <EllipsisHorizontalIcon className="h-6 w-auto hover:text-sky-500 cursor-pointer" />
