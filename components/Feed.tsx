@@ -20,7 +20,7 @@ const Feed = () => {
 
     fetchPosts();
   }, []);
-  console.log(p.docs[0].data());
+  console.log(p?.docs[0]?.data());
   const posts = [
     {
       id: "1",
