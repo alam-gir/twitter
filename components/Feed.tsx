@@ -2,8 +2,10 @@ import { ArrowLeftCircleIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import Input from "./Input";
 import Post from "./Post";
+import { useSession } from "next-auth/react";
 
 const Feed = () => {
+  const { data } = useSession();
   const posts = [
     {
       id: "1",
@@ -50,10 +52,7 @@ const Feed = () => {
         </div>
       </div>
       {/* {INPUT } */}
-      <div>
-        {" "}
-        <Input />{" "}
-      </div>
+      <div>{data?.user && <Input />}</div>
 
       {/* {post } */}
       <div>

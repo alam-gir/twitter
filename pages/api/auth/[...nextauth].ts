@@ -5,8 +5,8 @@ export const authOptions = {
   // Configure one or more authentication providers
   providers: [
     GithubProvider({
-      clientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.NEXT_PUBLIC_GITHUB_CLIENT_SECRET as string,
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     }) as OAuthConfig<Profile>,
     // ...add more providers here
   ],
@@ -14,7 +14,7 @@ export const authOptions = {
   pages: {
     signIn: "/auth/signin",
   },
-  secret: process.env.SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async session({ session, token }: { session: Session; token: any }) {
       session.user.username = session.user.name
