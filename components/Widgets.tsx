@@ -17,7 +17,7 @@ const Widgets = ({ articles, users }: WidgetsProps) => {
 
   return (
     <div className="hidden lg:inline xl:w-[600px] lg:w-[400px] space-y-3">
-      <div className="w-[100%] px-4 sticky top-0 bg-white py-1.5 space-y-5">
+      <div className="w-[100%] px-4 sticky top-0 bg-white py-1.5 space-y-5 z-10">
         <div className="flex items-center h-10 w-[100%] xl:w-[83%] p-3 rounded-full relative ">
           <MagnifyingGlassIcon className="h-5 w-5 z-10 text-gray-500" />
           <input
@@ -47,9 +47,10 @@ const Widgets = ({ articles, users }: WidgetsProps) => {
           show more...
         </button>
       </div>
-      {data && (
-        <>
-          <div className="mx-4 p-3 rounded-xl space-y-3 w-[90%] xl:w-[75%] bg-red-50">
+
+      <div className="sticky top-14 mx-4 p-3 rounded-xl space-y-3 w-[90%] xl:w-[75%] bg-red-50">
+        {data && (
+          <>
             <h4 className="capitalize text-gray-600 tracking-wide font-bold">
               Peoples you may know
             </h4>
@@ -67,10 +68,10 @@ const Widgets = ({ articles, users }: WidgetsProps) => {
               className="capitalize text-sm text-blue-500 cursor-pointer hover:text-blue-300"
             >
               show more...
-            </button>
-          </div>
-        </>
-      )}
+            </button>{" "}
+          </>
+        )}
+      </div>
     </div>
   );
 };
