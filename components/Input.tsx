@@ -42,14 +42,15 @@ const Input = () => {
     // set document
     const docRef = await addDoc(dbRef, post);
     //upload image ** upload string only can take string ,
-    if (typeof selectedImage === "string") {
+    if (selectedImage) {
       const imageRef = ref(storage, `posts/${docRef.id}/image`);
-      await uploadString(imageRef, selectedImage).then(async (snapshaot) => {
-        //get image download link
-        const downloadUrl = await getDownloadURL(imageRef);
+      await uploadString(imageRef, selectedImage, "data_url").then(async () => {
         //update document with download link
         const docRefWId = doc(db, "posts", docRef.id);
-        await updateDoc(docRefWId, { image: downloadUrl });
+        //get image download link
+        await getDownloadURL(imageRef).then((url) =>
+          updateDoc(docRefWId, { image: url })
+        );
       });
     }
     // make empty the post input box
@@ -98,7 +99,11 @@ const Input = () => {
           />
         </div>
         {/* preview image section */}
-        <div className=" relative py-2 flex justify-center w-full">
+        <div
+          className={`${
+            selectedImage && "py-2"
+          } relative flex justify-center w-full`}
+        >
           {selectedImage && (
             <>
               <XMarkIcon

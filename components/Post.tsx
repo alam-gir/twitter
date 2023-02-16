@@ -6,22 +6,23 @@ import {
   ShareIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { DocumentData } from "firebase/firestore";
 import React from "react";
 interface PostProps {
-  id: string;
+  uid: string;
   name: string;
   username: string;
   userImg: string;
-  img: string;
-  text: string;
-  timestamp: string;
+  image?: string;
+  text?: string;
+  timestamp?: string;
 }
 const Post = ({
-  id,
+  uid,
   name,
   username,
   userImg,
-  img,
+  image,
   text,
   timestamp,
 }: PostProps) => {
@@ -29,7 +30,11 @@ const Post = ({
     <div className="w-full p-4 flex gap-2 border-b border-gray-200">
       {/* userImg */}
       <div className="w-[3rem] h-[3rem] rounded-full flex items-center justify-center">
-        <img src={userImg} className="h-[2.5rem] w-[2.5rem] rounded-full" />
+        <img
+          src={userImg}
+          className="h-[2.5rem] w-[2.5rem] rounded-full"
+          alt=""
+        />
       </div>
 
       {/* rightside */}
@@ -57,7 +62,7 @@ const Post = ({
         </p>
 
         {/* post image  */}
-        <img src={img} alt="" className="h-auto w-full rounded-2xl pr-1" />
+        <img src={image} alt="" className="h-auto w-full rounded-2xl pr-1" />
 
         {/* post reaction icons  */}
         <div className="flex justify-between px-4 py-2">
