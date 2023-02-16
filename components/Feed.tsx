@@ -1,12 +1,26 @@
 import { ArrowLeftCircleIcon, SparklesIcon } from "@heroicons/react/24/outline";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Input from "./Input";
 import Post from "./Post";
 import { signIn, useSession } from "next-auth/react";
 import SidebarMenuItem from "./SidebarMenuItem";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/firebase";
 
 const Feed = () => {
   const { data } = useSession();
+  const [p, setP] = useState<any>();
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const postRef = collection(db, "posts");
+      const allData = await getDocs(postRef);
+      setP(allData);
+    };
+
+    fetchPosts();
+  }, []);
+  console.log(p.docs[0].data());
   const posts = [
     {
       id: "1",

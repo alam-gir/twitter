@@ -20,9 +20,7 @@ const Input = () => {
   const { data } = useSession();
   const [postText, setPostText] = useState<string>("");
   const imagePicker = useRef<HTMLInputElement | null>(null);
-  const [selectedImage, setSelectedImage] = useState<
-    string | ArrayBuffer | null | undefined
-  >(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handlerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -68,7 +66,8 @@ const Input = () => {
     }
 
     reader.onload = (readerEvent) => {
-      setSelectedImage(readerEvent?.target?.result);
+      const imageData: string = readerEvent?.target?.result as string;
+      setSelectedImage(imageData);
     };
   };
 
