@@ -1,4 +1,7 @@
-import { SparklesIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowRightCircleIcon,
+  SparklesIcon,
+} from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
 import Input from "./Input";
 import Post from "./Post";
@@ -10,6 +13,7 @@ import {
   query,
 } from "firebase/firestore";
 import { db } from "@/firebase";
+import SidebarMenuItem from "./SidebarMenuItem";
 
 const Feed = () => {
   const [posts, setPosts] = useState<DocumentData[]>([]);
@@ -30,7 +34,14 @@ const Feed = () => {
           home
         </h2>
         <div>
-          <SparklesIcon className="hoverEffect h-10 w-10 p-2 text-gray-700" />
+          <SparklesIcon className=" hidden md:inline hoverEffect h-10 w-10 p-2 text-gray-700" />
+          <div className="md:hidden">
+            <SidebarMenuItem
+              Icon={ArrowRightCircleIcon}
+              text={"log out"}
+              active={false}
+            />
+          </div>
         </div>
       </div>
       {/* {INPUT } */}
