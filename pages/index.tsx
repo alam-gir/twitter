@@ -40,7 +40,6 @@ export default Home;
 export const getServerSideProps = async (contex: GetServerSidePropsContext) => {
   // get session for securing page
   const session = await getServerSession(contex.req, contex.res, authOptions);
-  console.log("session from server", session);
   if (!session) {
     // if not sined in then nevigate to signin page
     return { redirect: { destination: "/api/auth/signin" } };
