@@ -111,17 +111,22 @@ const Post = ({
         <div className="flex justify-between px-4 py-2">
           <ChatBubbleBottomCenterTextIcon className="h-9 w-9 p-2 hoverEffect hover:text-sky-500 hover:bg-sky-100" />
           <TrashIcon className="h-9 w-9 p-2 hoverEffect hover:text-red-500 hover:bg-red-100" />
-          {isReacted ? (
-            <HeartIconSolid
-              onClick={hadnlerReact}
-              className=" text-[#e50914] h-9 w-9 p-2 hoverEffect hover:text-red-500 hover:bg-red-100"
-            />
-          ) : (
-            <HeartIcon
-              onClick={hadnlerReact}
-              className="h-9 w-9 p-2 hoverEffect hover:text-red-500 hover:bg-red-100"
-            />
-          )}
+          <div>
+            {isReacted ? (
+              <div className="flex items-center">
+                <HeartIconSolid
+                  onClick={hadnlerReact}
+                  className=" text-[#e50914] h-9 w-9 p-2  hoverEffect hover:text-red-500 hover:bg-red-100"
+                />
+                <span className=" text-gray-600 text-sm">{reacts?.length}</span>
+              </div>
+            ) : (
+              <HeartIcon
+                onClick={hadnlerReact}
+                className="h-9 w-9 p-2 hoverEffect hover:text-red-500 hover:bg-red-100"
+              />
+            )}
+          </div>
 
           <ShareIcon className="h-9 w-9 p-2 hoverEffect hover:text-sky-500 hover:bg-sky-100" />
           <ChartBarIcon className="h-9 w-9 p-2 hoverEffect hover:text-sky-500 hover:bg-sky-100" />
