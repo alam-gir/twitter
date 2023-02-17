@@ -13,23 +13,13 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase";
 
-interface PostI {
-  image?: string;
-  name: string;
-  text?: string;
-  timestamp: string;
-  uid: string;
-  userImage?: string;
-  username: string;
-}
-
 const Feed = () => {
   const { data } = useSession();
   const [posts, setPosts] = useState<DocumentData[]>([]);
 
   useEffect(() => {
     onSnapshot(
-      query(collection(db, "posts"), orderBy("timestamp")),
+      query(collection(db, "posts"), orderBy("timestamp", "desc")),
       (snapshop) => setPosts(snapshop.docs)
     );
   }, []);

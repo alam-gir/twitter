@@ -54,7 +54,7 @@ const Post = ({
             </div>
             <span className="h-full">
               <Moment fromNow className="text-[12px] text-gray-400">
-                {timestamp.toDate()}
+                {timestamp?.toDate()}
               </Moment>
             </span>
           </div>
