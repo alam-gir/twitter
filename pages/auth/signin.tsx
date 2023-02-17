@@ -7,6 +7,9 @@ const signin = () => {
       <button onClick={() => signIn("github", { callbackUrl: "/" })}>
         sign in with {"GITHUB"}
       </button>
+      <button onClick={() => signIn("google", { callbackUrl: "/" })}>
+        sign in with {"GOOGLE"}
+      </button>
     </div>
   );
 };

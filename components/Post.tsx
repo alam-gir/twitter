@@ -14,9 +14,9 @@ import {
   doc,
   DocumentData,
   onSnapshot,
-  query,
   setDoc,
 } from "firebase/firestore";
+import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import Moment from "react-moment";
 interface PostProps {
@@ -41,6 +41,8 @@ const Post = ({
 }: PostProps) => {
   const [reacts, setReacts] = useState<DocumentData[] | undefined>([]);
   const [isReacted, setReacted] = useState<boolean>(false);
+  const { data } = useSession();
+  const userId = data?.user?.uid as string;
   // get Reaction collection from server
   useEffect(() => {
     onSnapshot(collection(db, "posts", docId, "reacts"), (snapshot) =>
@@ -48,21 +50,23 @@ const Post = ({
     );
   }, [db]);
   useEffect(() => {
-    setReacted(reacts?.findIndex((react) => react.id === uid) !== -1);
+    setReacted(reacts?.findIndex((react) => react.id === userId) !== -1);
   }, [reacts]);
   // likes store and remove
   const hadnlerReact = async () => {
-    const docRef = doc(db, "posts", docId, "reacts", uid);
-    isReacted
-      ? await deleteDoc(docRef)
-      : await setDoc(docRef, {
-          username,
-        });
+    if (data) {
+      const userId = data?.user.uid as string;
+      const docRef = doc(db, "posts", docId, "reacts", userId);
+      isReacted
+        ? await deleteDoc(docRef)
+        : await setDoc(docRef, {
+            username: userId,
+          });
+    } else {
+      alert("login to react");
+    }
   };
 
-  if (reacts?.length) {
-    console.log(reacts[0].data());
-  }
   return (
     <div className="w-full p-4 flex gap-2 border-b border-gray-200">
       {/* userImg */}
@@ -111,14 +115,13 @@ const Post = ({
         <div className="flex justify-between px-4 py-2">
           <ChatBubbleBottomCenterTextIcon className="h-9 w-9 p-2 hoverEffect hover:text-sky-500 hover:bg-sky-100" />
           <TrashIcon className="h-9 w-9 p-2 hoverEffect hover:text-red-500 hover:bg-red-100" />
-          <div>
+          <div className="flex items-center">
             {isReacted ? (
-              <div className="flex items-center">
+              <div>
                 <HeartIconSolid
                   onClick={hadnlerReact}
                   className=" text-[#e50914] h-9 w-9 p-2  hoverEffect hover:text-red-500 hover:bg-red-100"
                 />
-                <span className=" text-gray-600 text-sm">{reacts?.length}</span>
               </div>
             ) : (
               <HeartIcon
@@ -126,6 +129,12 @@ const Post = ({
                 className="h-9 w-9 p-2 hoverEffect hover:text-red-500 hover:bg-red-100"
               />
             )}
+            <span
+              className={`${isReacted ? "text-[#e50914]" : "text-gray-600"}
+                   text-sm`}
+            >
+              {reacts?.length}
+            </span>
           </div>
 
           <ShareIcon className="h-9 w-9 p-2 hoverEffect hover:text-sky-500 hover:bg-sky-100" />

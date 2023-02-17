@@ -17,6 +17,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 
 const Sidebar = () => {
   const { data } = useSession();
+  console.log("from sidebar", data?.user.image);
   return (
     <div className="hidden sm:flex flex-col p-2 xl:items-start sticky top-0 h-screen w-auto ">
       {/* {twitter logo} */}
@@ -99,7 +100,7 @@ const Sidebar = () => {
         <>
           <div className="hoverEffect flex items-center justify-center text-gray-700 xl:justify-start mt-auto">
             <img
-              src={data?.user.image}
+              src={data?.user?.image}
               alt="profileImg"
               className="h-10 w-10 rounded-full xl:mr-2"
             />

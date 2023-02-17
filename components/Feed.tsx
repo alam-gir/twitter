@@ -16,7 +16,7 @@ import { db } from "@/firebase";
 const Feed = () => {
   const { data } = useSession();
   const [posts, setPosts] = useState<DocumentData[]>([]);
-
+  console.log();
   useEffect(() => {
     onSnapshot(
       query(collection(db, "posts"), orderBy("timestamp", "desc")),
@@ -25,7 +25,6 @@ const Feed = () => {
   }, []);
 
   posts.forEach((post) => console.log(post.data().image));
-  console.log(posts);
   // const posts = [
   //   {
   //     id: "1",
@@ -62,7 +61,7 @@ const Feed = () => {
     <div className="flex flex-col border border-gray-200 relative w-full">
       <div
         className="flex w-full
-      h-12 border-b border-gray-200 justify-between items-center px-2 sticky top-0 z-30 bg-white"
+      h-12 border-b border-gray-200 justify-between items-center px-2 sticky top-0 z-30 bg-[rgba(255,255,255,.7)]  backdrop-blur-xl "
       >
         <h2 className="capitalize font-bold cursor-pointer text-lg sm:font-xl">
           home
