@@ -54,17 +54,13 @@ const Post = ({
   }, [reacts]);
   // likes store and remove
   const hadnlerReact = async () => {
-    if (data) {
-      const userId = data?.user.uid as string;
-      const docRef = doc(db, "posts", docId, "reacts", userId);
-      isReacted
-        ? await deleteDoc(docRef)
-        : await setDoc(docRef, {
-            username: userId,
-          });
-    } else {
-      alert("login to react");
-    }
+    const userId = data?.user.uid as string;
+    const docRef = doc(db, "posts", docId, "reacts", userId);
+    isReacted
+      ? await deleteDoc(docRef)
+      : await setDoc(docRef, {
+          username: userId,
+        });
   };
 
   return (

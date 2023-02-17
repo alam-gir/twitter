@@ -1,6 +1,5 @@
 import { ArticleI, UserI } from "@/types/INTERFACES";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import News from "./News";
 import Peoples from "./Peoples";
@@ -11,7 +10,6 @@ interface WidgetsProps {
 }
 
 const Widgets = ({ articles, users }: WidgetsProps) => {
-  const { data } = useSession();
   const [newsLimit, setNewsLimit] = useState<number>(3);
   const [peoplesLimit, setPeoplesLimit] = useState<number>(3);
 
@@ -49,28 +47,24 @@ const Widgets = ({ articles, users }: WidgetsProps) => {
       </div>
 
       <div className="sticky top-14 mx-4 p-3 rounded-xl space-y-3 w-[90%] xl:w-[75%] bg-red-50">
-        {data && (
-          <>
-            <h4 className="capitalize text-gray-600 tracking-wide font-bold">
-              Peoples you may know
-            </h4>
-            <div className="flex flex-col gap-4 ">
-              {users.slice(0, peoplesLimit).map((user, index) => (
-                <Peoples key={index} user={user} />
-              ))}
-            </div>
-            <button
-              onClick={() =>
-                setPeoplesLimit((prev) => {
-                  return prev + 3;
-                })
-              }
-              className="capitalize text-sm text-blue-500 cursor-pointer hover:text-blue-300"
-            >
-              show more...
-            </button>{" "}
-          </>
-        )}
+        <h4 className="capitalize text-gray-600 tracking-wide font-bold">
+          Peoples you may know
+        </h4>
+        <div className="flex flex-col gap-4 ">
+          {users.slice(0, peoplesLimit).map((user, index) => (
+            <Peoples key={index} user={user} />
+          ))}
+        </div>
+        <button
+          onClick={() =>
+            setPeoplesLimit((prev) => {
+              return prev + 3;
+            })
+          }
+          className="capitalize text-sm text-blue-500 cursor-pointer hover:text-blue-300"
+        >
+          show more...
+        </button>
       </div>
     </div>
   );

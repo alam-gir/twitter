@@ -1,7 +1,10 @@
 import Feed from "@/components/Feed";
 import Sidebar from "@/components/Sidebar";
 import Widgets from "@/components/Widgets";
+import { GetServerSidePropsContext } from "next";
+import { getServerSession } from "next-auth";
 import Head from "next/head";
+import { authOptions } from "./api/auth/[...nextauth]";
 interface HomeProps {
   newsResults: any;
   usersResults: any;
@@ -34,7 +37,13 @@ const Home = ({
 
 export default Home;
 
-export const getServerSideProps = async () => {
+export const getServerSideProps = async (contex: GetServerSidePropsContext) => {
+  const session = await getServerSession(contex.req, contex.res, authOptions);
+  console.log("session from server", session);
+  if (!session) {
+    return { redirect: { destination: "/api/auth/signin" } };
+  }
+
   const newses = await fetch(
     "https://saurav.tech/NewsAPI/top-headlines/category/business/us.json"
   );
