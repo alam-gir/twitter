@@ -1,4 +1,4 @@
-import { db } from "@/firebase";
+import { db, storage } from "@/firebase";
 import {
   ChartBarIcon,
   ChatBubbleBottomCenterTextIcon,
@@ -16,6 +16,7 @@ import {
   onSnapshot,
   setDoc,
 } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import Moment from "react-moment";
@@ -61,6 +62,18 @@ const Post = ({
       : await setDoc(docRef, {
           username: userId,
         });
+  };
+
+  // delete a post
+  const handlerDelete = async () => {
+    if (window.confirm("Are you sure to delete this post ?")) {
+      //delete post
+      const docRef = doc(db, "posts", docId);
+      await deleteDoc(docRef);
+      // delete image
+      const imgRef = ref(storage, `posts/${docId}/image`);
+      await deleteObject(imgRef);
+    }
   };
 
   return (
@@ -110,7 +123,12 @@ const Post = ({
         {/* post reaction icons  */}
         <div className="flex justify-between px-4 py-2">
           <ChatBubbleBottomCenterTextIcon className="h-9 w-9 p-2 hoverEffect hover:text-sky-500 hover:bg-sky-100" />
-          <TrashIcon className="h-9 w-9 p-2 hoverEffect hover:text-red-500 hover:bg-red-100" />
+          {uid === data?.user.uid && (
+            <TrashIcon
+              className="h-9 w-9 p-2 hoverEffect hover:text-red-500 hover:bg-red-100"
+              onClick={handlerDelete}
+            />
+          )}
           <div className="flex items-center">
             {isReacted ? (
               <div>

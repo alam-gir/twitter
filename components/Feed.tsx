@@ -22,7 +22,7 @@ const Feed = () => {
       query(collection(db, "posts"), orderBy("timestamp", "desc")),
       (snapshop) => setPosts(snapshop.docs)
     );
-  }, []);
+  }, [db]);
 
   return (
     <div className="flex flex-col border border-gray-200 relative w-full">
@@ -34,8 +34,8 @@ const Feed = () => {
           home
         </h2>
         <div>
-          <SparklesIcon className=" hidden md:inline hoverEffect h-10 w-10 p-2 text-gray-700" />
-          <div className="md:hidden">
+          <SparklesIcon className=" hidden sm:inline hoverEffect h-10 w-10 p-2 text-gray-700" />
+          <div className="sm:hidden">
             <SidebarMenuItem
               Icon={ArrowRightCircleIcon}
               text={"log out"}
