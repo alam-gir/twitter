@@ -96,6 +96,7 @@ const Feed = () => {
               text={post?.data().text}
               image={post?.data()?.image}
               timestamp={post?.data()?.timestamp}
+              docId={post?.id}
             />
           ))}
         </div>
