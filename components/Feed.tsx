@@ -20,8 +20,6 @@ const Feed = () => {
     );
   }, []);
 
-  posts.forEach((post) => console.log(post.data().image));
-
   return (
     <div className="flex flex-col border border-gray-200 relative w-full">
       <div

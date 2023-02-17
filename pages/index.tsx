@@ -38,24 +38,27 @@ const Home = ({
 export default Home;
 
 export const getServerSideProps = async (contex: GetServerSidePropsContext) => {
+  // get session for securing page
   const session = await getServerSession(contex.req, contex.res, authOptions);
   console.log("session from server", session);
   if (!session) {
+    // if not sined in then nevigate to signin page
     return { redirect: { destination: "/api/auth/signin" } };
   }
 
-  const newses = await fetch(
-    "https://saurav.tech/NewsAPI/top-headlines/category/business/us.json"
-  );
-  const users = await fetch(
-    "https://randomuser.me/api/?results=600&inc=name,login,picture&noinfo"
-  );
-  const dataOfNewses = await newses.json();
-  const dataOfUsers = await users.json();
+  const [newses, users] = await Promise.all([
+    fetch(
+      "https://saurav.tech/NewsAPI/top-headlines/category/business/us.json"
+    ).then((response) => response.json()),
+
+    fetch(
+      "https://randomuser.me/api/?results=600&inc=name,login,picture&noinfo"
+    ).then((response) => response.json()),
+  ]);
   return {
     props: {
-      newsResults: dataOfNewses,
-      usersResults: dataOfUsers,
+      newsResults: newses,
+      usersResults: users,
     },
   };
 };
