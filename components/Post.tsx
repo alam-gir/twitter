@@ -43,15 +43,19 @@ const Post = ({
 
         <div className="flex w-full space-x-1 items-center justify-between whitespace-nowrap h-[3rem]">
           {/*post user info  */}
-          <div className="flex space-x-1 items-center ">
-            <h4 className="font-bold capitalize text-[15px] sm:text-[16px] hover:underline cursor-pointer">
-              {name}
-            </h4>
-            <span className=" text-sm sm:text-[15px] hover:underline cursor-pointer">
-              @{username}
-            </span>
-            <span className=" text-sm sm:text-[15px] ">
-              - <Moment fromNow>{timestamp.toDate()}</Moment>
+          <div className="flex space-x-2 items-center h-full">
+            <div className="flex flex-col leading-5">
+              <h4 className="font-bold capitalize text-[15px] sm:text-[16px] hover:underline cursor-pointer">
+                {name}
+              </h4>
+              <span className=" text-[13px] sm:text-[15px] hover:underline cursor-pointer text-gray-500">
+                @{username}
+              </span>
+            </div>
+            <span className="h-full">
+              <Moment fromNow className="text-[12px] text-gray-400">
+                {timestamp.toDate()}
+              </Moment>
             </span>
           </div>
           {/* dot icon  */}
