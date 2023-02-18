@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase";
 import SidebarMenuItem from "./SidebarMenuItem";
+import { AnimatePresence, motion } from "framer-motion";
 
 const Feed = () => {
   const [posts, setPosts] = useState<DocumentData[]>([]);
@@ -52,19 +53,19 @@ const Feed = () => {
       {/* {post } */}
       <div>
         <div>
-          {posts.map((post, index) => (
-            <Post
-              key={index}
-              uid={post?.data()?.uid}
-              name={post?.data()?.name}
-              username={post?.data()?.username}
-              userImg={post?.data().userImage}
-              text={post?.data().text}
-              image={post?.data()?.image}
-              timestamp={post?.data()?.timestamp}
-              docId={post?.id}
-            />
-          ))}
+          <AnimatePresence>
+            {posts.map((post, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1 }}
+              >
+                <Post key={index} post={post} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
     </div>

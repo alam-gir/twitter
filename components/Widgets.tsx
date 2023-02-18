@@ -3,6 +3,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import News from "./News";
 import Peoples from "./Peoples";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface WidgetsProps {
   articles: ArticleI[];
@@ -30,9 +31,19 @@ const Widgets = ({ articles, users }: WidgetsProps) => {
           {"what's happening . . ."}
         </h4>
         <div className="flex flex-col gap-3 p-2">
-          {articles.slice(0, newsLimit).map((article, index) => (
-            <News key={index} article={article} />
-          ))}
+          <AnimatePresence>
+            {articles.slice(0, newsLimit).map((article, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1 }}
+              >
+                <News key={index} article={article} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
         <button
           onClick={() =>
@@ -51,9 +62,19 @@ const Widgets = ({ articles, users }: WidgetsProps) => {
           Peoples you may know
         </h4>
         <div className="flex flex-col gap-4 ">
-          {users.slice(0, peoplesLimit).map((user, index) => (
-            <Peoples key={index} user={user} />
-          ))}
+          <AnimatePresence>
+            {users.slice(0, peoplesLimit).map((user, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1 }}
+              >
+                <Peoples key={index} user={user} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
         <button
           onClick={() =>

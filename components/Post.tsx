@@ -20,43 +20,26 @@ import { deleteObject, ref } from "firebase/storage";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import Moment from "react-moment";
-interface PostProps {
-  uid: string;
-  name: string;
-  username: string;
-  userImg: string;
-  image?: string;
-  text?: string;
-  docId: string;
-  timestamp?: any;
-}
-const Post = ({
-  uid,
-  name,
-  username,
-  userImg,
-  image,
-  text,
-  docId,
-  timestamp,
-}: PostProps) => {
+const Post = ({ post }: { post: DocumentData }) => {
   const [reacts, setReacts] = useState<DocumentData[] | undefined>([]);
   const [isReacted, setReacted] = useState<boolean>(false);
   const { data } = useSession();
   const userId = data?.user?.uid as string;
   // get Reaction collection from server
   useEffect(() => {
-    onSnapshot(collection(db, "posts", docId, "reacts"), (snapshot) =>
-      setReacts(snapshot.docs)
+    const unsubscribe = onSnapshot(
+      collection(db, "posts", post?.id, "reacts"),
+      (snapshot) => setReacts(snapshot.docs)
     );
   }, [db]);
+
   useEffect(() => {
     setReacted(reacts?.findIndex((react) => react.id === userId) !== -1);
   }, [reacts]);
   // likes store and remove
   const hadnlerReact = async () => {
     const userId = data?.user.uid as string;
-    const docRef = doc(db, "posts", docId, "reacts", userId);
+    const docRef = doc(db, "posts", post?.id, "reacts", userId);
     isReacted
       ? await deleteDoc(docRef)
       : await setDoc(docRef, {
@@ -68,11 +51,13 @@ const Post = ({
   const handlerDelete = async () => {
     if (window.confirm("Are you sure to delete this post ?")) {
       //delete post
-      const docRef = doc(db, "posts", docId);
+      const docRef = doc(db, "posts", post?.id);
       await deleteDoc(docRef);
-      // delete image
-      const imgRef = ref(storage, `posts/${docId}/image`);
-      await deleteObject(imgRef);
+      // delete image if available
+      if (post?.data().image) {
+        const imgRef = ref(storage, `posts/${post.id}/image`);
+        await deleteObject(imgRef);
+      }
     }
   };
 
@@ -81,7 +66,7 @@ const Post = ({
       {/* userImg */}
       <div className="w-[3rem] h-[3rem] rounded-full flex items-center justify-center">
         <img
-          src={userImg}
+          src={post?.data().userImage}
           className="h-[2.5rem] w-[2.5rem] rounded-full"
           alt=""
         />
@@ -96,15 +81,15 @@ const Post = ({
           <div className="flex space-x-2 items-center h-full">
             <div className="flex flex-col leading-5">
               <h4 className="font-bold capitalize text-[15px] sm:text-[16px] hover:underline cursor-pointer">
-                {name}
+                {post?.data().name}
               </h4>
               <span className=" text-[13px] sm:text-[15px] hover:underline cursor-pointer text-gray-500">
-                @{username}
+                @{post?.data().username}
               </span>
             </div>
             <span className="h-full">
               <Moment fromNow className="text-[12px] text-gray-400">
-                {timestamp?.toDate()}
+                {post?.data().timestamp?.toDate()}
               </Moment>
             </span>
           </div>
@@ -114,16 +99,20 @@ const Post = ({
 
         {/* post text  */}
         <p className="text-gray-800 text-[15px] sm:text-[16px] capitalize pb-2">
-          {text}
+          {post?.data().text}
         </p>
 
         {/* post image  */}
-        <img src={image} alt="" className="h-auto w-full rounded-2xl pr-1" />
+        <img
+          src={post?.data().image}
+          alt=""
+          className="h-auto w-full rounded-2xl pr-1"
+        />
 
         {/* post reaction icons  */}
         <div className="flex justify-between px-4 py-2">
           <ChatBubbleBottomCenterTextIcon className="h-9 w-9 p-2 hoverEffect hover:text-sky-500 hover:bg-sky-100" />
-          {uid === data?.user.uid && (
+          {post?.data().uid === data?.user.uid && (
             <TrashIcon
               className="h-9 w-9 p-2 hoverEffect hover:text-red-500 hover:bg-red-100"
               onClick={handlerDelete}
@@ -143,12 +132,15 @@ const Post = ({
                 className="h-9 w-9 p-2 hoverEffect hover:text-red-500 hover:bg-red-100"
               />
             )}
-            <span
-              className={`${isReacted ? "text-[#e50914]" : "text-gray-600"}
+
+            {reacts?.length! > 0 && (
+              <span
+                className={`${isReacted ? "text-[#e50914]" : "text-gray-600"}
                    text-sm`}
-            >
-              {reacts?.length}
-            </span>
+              >
+                {reacts?.length}
+              </span>
+            )}
           </div>
 
           <ShareIcon className="h-9 w-9 p-2 hoverEffect hover:text-sky-500 hover:bg-sky-100" />
