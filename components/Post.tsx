@@ -1,3 +1,4 @@
+import { commentModalState } from "@/atom/CommentModalState";
 import { db, storage } from "@/firebase";
 import {
   ChartBarIcon,
@@ -20,11 +21,16 @@ import { deleteObject, ref } from "firebase/storage";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import Moment from "react-moment";
+import { useRecoilState } from "recoil";
+
 const Post = ({ post }: { post: DocumentData }) => {
   const [reacts, setReacts] = useState<DocumentData[] | undefined>([]);
   const [isReacted, setReacted] = useState<boolean>(false);
   const { data } = useSession();
+  const [isOpenCommentM, setOpenCommentM] =
+    useRecoilState<boolean>(commentModalState);
   const userId = data?.user?.uid as string;
+
   // get Reaction collection from server
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -36,6 +42,7 @@ const Post = ({ post }: { post: DocumentData }) => {
   useEffect(() => {
     setReacted(reacts?.findIndex((react) => react.id === userId) !== -1);
   }, [reacts]);
+
   // likes store and remove
   const hadnlerReact = async () => {
     const userId = data?.user.uid as string;
@@ -111,7 +118,10 @@ const Post = ({ post }: { post: DocumentData }) => {
 
         {/* post reaction icons  */}
         <div className="flex justify-between px-4 py-2">
-          <ChatBubbleBottomCenterTextIcon className="h-9 w-9 p-2 hoverEffect hover:text-sky-500 hover:bg-sky-100" />
+          <ChatBubbleBottomCenterTextIcon
+            className="h-9 w-9 p-2 hoverEffect hover:text-sky-500 hover:bg-sky-100"
+            onClick={() => setOpenCommentM(!isOpenCommentM)}
+          />
           {post?.data().uid === data?.user.uid && (
             <TrashIcon
               className="h-9 w-9 p-2 hoverEffect hover:text-red-500 hover:bg-red-100"
