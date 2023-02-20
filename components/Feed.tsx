@@ -18,6 +18,7 @@ import SidebarMenuItem from "./SidebarMenuItem";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRecoilValue } from "recoil";
 import { postedState } from "@/atom/Posted";
+import { signOut } from "next-auth/react";
 
 const Feed = () => {
   const [posts, setPosts] = useState<DocumentData[]>([]);
@@ -58,6 +59,7 @@ const Feed = () => {
               Icon={ArrowRightCircleIcon}
               text={"log out"}
               active={false}
+              clickHandler={signOut}
             />
           </div>
         </div>
