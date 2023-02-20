@@ -201,7 +201,6 @@ const CommentModal = () => {
                 <h4 className="capitalize text-sm">all comments</h4>
               </div>
               <div className="flex flex-col gap-4 mt-2 ml-2">
-                <div className="absolute -z-10 h-full border-l ml-4 border-gray-200"></div>
                 {comments.map((comment, index) => (
                   <Comments key={index} comment={comment} docId={docId} />
                 ))}
