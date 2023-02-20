@@ -7,6 +7,7 @@ import {
 import { DocumentData } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import React from "react";
+import Moment from "react-moment";
 
 const Comments = ({ comment }: { comment?: DocumentData }) => {
   const { data } = useSession();
@@ -25,7 +26,9 @@ const Comments = ({ comment }: { comment?: DocumentData }) => {
           <h4 className="text-[14px] sm:text-[15px] text-gray-700 cursor-pointer hover:underline">
             {comment?.data()?.name}
           </h4>
-          <p className="text-[12px] text-gray-400">2 min ago</p>
+          <p className="text-[12px] text-gray-400">
+            <Moment fromNow>{comment?.data()?.timestamp?.toDate()}</Moment>
+          </p>
         </div>
       </div>
 
@@ -60,9 +63,9 @@ const Comments = ({ comment }: { comment?: DocumentData }) => {
           </div>
 
           <div>
-            {
+            {comment?.id === data?.user.uid && (
               <TrashIcon className="h-6 w-6 p-1 cursor-pointer hover:text-red-500" />
-            }
+            )}
           </div>
         </div>
       </div>

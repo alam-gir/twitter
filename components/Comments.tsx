@@ -16,6 +16,7 @@ import {
 } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import Moment from "react-moment";
 import SubComments from "./SubComments";
 
 const Comments = ({
@@ -100,7 +101,9 @@ const Comments = ({
           <h4 className="text-[14px] sm:text-[15px] text-gray-700 cursor-pointer hover:underline">
             {comment?.data()?.name}
           </h4>
-          <p className="text-[12px] text-gray-400">2 min ago</p>
+          <p className="text-[12px] text-gray-400">
+            <Moment fromNow>{comment?.data()?.timestamp?.toDate()}</Moment>
+          </p>
         </div>
       </div>
 
