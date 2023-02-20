@@ -14,6 +14,7 @@ import {
   deleteDoc,
   doc,
   DocumentData,
+  getDocs,
   onSnapshot,
   setDoc,
 } from "firebase/firestore";
@@ -25,6 +26,7 @@ import { useRecoilState } from "recoil";
 
 const Post = ({ post }: { post: DocumentData }) => {
   const [reacts, setReacts] = useState<DocumentData[] | undefined>([]);
+  const [comments, setComments] = useState<DocumentData[] | undefined>([]);
   const [isReacted, setReacted] = useState<boolean>(false);
   const { data } = useSession();
   const [isOpenCommentM, setOpenCommentM] =
@@ -35,9 +37,14 @@ const Post = ({ post }: { post: DocumentData }) => {
 
   // get Reaction collection from server
   useEffect(() => {
-    onSnapshot(collection(db, "posts", post?.id, "reacts"), (snapshot) =>
-      setReacts(snapshot.docs)
-    );
+    const docsRef = collection(db, "posts", post?.id, "reacts");
+    onSnapshot(docsRef, (snapshot) => setReacts(snapshot.docs));
+  }, [db]);
+
+  // get comments collection from server
+  useEffect(() => {
+    const docsRef = collection(db, "posts", post?.id, "comments");
+    onSnapshot(docsRef, (snapshot) => setComments(snapshot.docs));
   }, [db]);
 
   useEffect(() => {
@@ -68,6 +75,7 @@ const Post = ({ post }: { post: DocumentData }) => {
       }
     }
   };
+  console.log(comments);
 
   return (
     <div className="w-full p-4 flex gap-2 border-b border-gray-200">
@@ -119,13 +127,16 @@ const Post = ({ post }: { post: DocumentData }) => {
 
         {/* post reaction icons  */}
         <div className="flex justify-between px-4 py-2">
-          <ChatBubbleBottomCenterTextIcon
-            className="h-9 w-9 p-2 hoverEffect hover:text-sky-500 hover:bg-sky-100"
-            onClick={() => {
-              setDocId(post?.id);
-              setOpenCommentM(true);
-            }}
-          />
+          <div className="flex items-center">
+            <ChatBubbleBottomCenterTextIcon
+              className="h-9 w-9 p-2 hoverEffect hover:text-sky-500 hover:bg-sky-100"
+              onClick={() => {
+                setDocId(post?.id);
+                setOpenCommentM(true);
+              }}
+            />
+            {comments?.length! > 0 && comments?.length}
+          </div>
           {post?.data().uid === data?.user.uid && (
             <TrashIcon
               className="h-9 w-9 p-2 hoverEffect hover:text-red-500 hover:bg-red-100"

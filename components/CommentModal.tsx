@@ -8,7 +8,14 @@ import {
 import { Modal } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { doc, DocumentData, getDoc, onSnapshot } from "firebase/firestore";
+import {
+  doc,
+  DocumentData,
+  getDoc,
+  serverTimestamp,
+  addDoc,
+  collection,
+} from "firebase/firestore";
 import { db } from "@/firebase";
 import LoaderSVG from "./LoaderSVG";
 
@@ -19,21 +26,45 @@ const CommentModal = () => {
   const docId = useRecoilValue(docIdState);
   const [post, setPost] = useState<DocumentData>({});
   const { data } = useSession();
+  const [commentInput, setCommentInput] = useState<string>("");
 
   // request for get post
   const fetchPost = async () => {
     const docRef = doc(db, "posts", docId);
     await getDoc(docRef)
       .then((doc) => {
-        if (doc.exists()) setPost(doc.data());
-        setLoading(false);
+        if (doc.exists()) {
+          setPost(doc.data());
+          setLoading(false);
+        }
       })
       .catch((err) => console.log(err.message))
       .finally(() => setLoading(false));
   };
+
+  // get post
   useEffect(() => {
     fetchPost();
   }, [docId, db]);
+
+  // take comment text
+  const handlerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCommentInput(e.target.value);
+  };
+
+  // sunmit reply tweet
+  const handlerSubmit = async () => {
+    const userId = data?.user.uid as string;
+
+    await addDoc(collection(db, "posts", docId, "comments"), {
+      text: commentInput,
+      uid: userId,
+      username: data?.user.username,
+      userImage: data?.user.image,
+      timestamp: serverTimestamp(),
+    });
+    setCommentInput("");
+  };
 
   return (
     <div className="absolute top-[20%] left-1/2 translate-x-[-50%] z-10">
@@ -101,8 +132,8 @@ const CommentModal = () => {
                       name=""
                       id=""
                       placeholder="tweet your reply . . ."
-                      // onChange={handlerChange}
-                      // value={postText}
+                      onChange={handlerChange}
+                      value={commentInput!}
                     />
                   </div>
                   {/* preview image section */}
@@ -137,7 +168,7 @@ const CommentModal = () => {
                     <button
                       className="flex justify-center items-center h-8 w-20 rounded-full capitalize bg-blue-400 text-white font-bold shadow-md hover:brightness-95 disabled:opacity-50"
                       // disabled={tweetBtnStatus()}
-                      // onClick={handlerSubmit}
+                      onClick={handlerSubmit}
                     >
                       tweet
                       {/* {!loading ? "tweet" : <LoaderSVG color="fill-gray-300" />} */}
