@@ -1,4 +1,4 @@
-import { commentModalState } from "@/atom/CommentModalState";
+import { commentModalState, docIdState } from "@/atom/CommentModalState";
 import { db, storage } from "@/firebase";
 import {
   ChartBarIcon,
@@ -29,13 +29,14 @@ const Post = ({ post }: { post: DocumentData }) => {
   const { data } = useSession();
   const [isOpenCommentM, setOpenCommentM] =
     useRecoilState<boolean>(commentModalState);
+  const [docId, setDocId] = useRecoilState<string>(docIdState);
+
   const userId = data?.user?.uid as string;
 
   // get Reaction collection from server
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(db, "posts", post?.id, "reacts"),
-      (snapshot) => setReacts(snapshot.docs)
+    onSnapshot(collection(db, "posts", post?.id, "reacts"), (snapshot) =>
+      setReacts(snapshot.docs)
     );
   }, [db]);
 
@@ -120,7 +121,10 @@ const Post = ({ post }: { post: DocumentData }) => {
         <div className="flex justify-between px-4 py-2">
           <ChatBubbleBottomCenterTextIcon
             className="h-9 w-9 p-2 hoverEffect hover:text-sky-500 hover:bg-sky-100"
-            onClick={() => setOpenCommentM(!isOpenCommentM)}
+            onClick={() => {
+              setDocId(post?.id);
+              setOpenCommentM(true);
+            }}
           />
           {post?.data().uid === data?.user.uid && (
             <TrashIcon

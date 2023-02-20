@@ -7,7 +7,11 @@
     @apply cursor-pointer hover:bg-gray-200 rounded-full w-[52px] xl:w-auto h-[52px] xl:h-auto xl:p-3;
   }
 
+  .customScrollbar {
+    @apply !scrollbar-thin !scrollbar-thumb-gray-300;
+  }
+
   .commentModal {
-    @apply w-4/5 sm:w-3/5 md:w-3/5 lg:w-2/5 absolute border top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] bg-gray-100 rounded p-2 outline-0 max-h-[calc(100vh-20%)] overflow-y-scroll !scrollbar-thin !scrollbar-thumb-gray-300;
+    @apply w-4/5 sm:w-3/5 md:w-3/5 lg:w-2/5 absolute border top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] bg-gray-100 rounded p-2 outline-0 max-h-[calc(100vh-20%)] overflow-y-scroll;
   }
 }

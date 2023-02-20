@@ -1,3 +1,4 @@
+import { commentModalState } from "@/atom/CommentModalState";
 import CommentModal from "@/components/CommentModal";
 import Feed from "@/components/Feed";
 import Sidebar from "@/components/Sidebar";
@@ -5,6 +6,7 @@ import Widgets from "@/components/Widgets";
 import { GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth";
 import Head from "next/head";
+import { useRecoilValue } from "recoil";
 import { authOptions } from "./api/auth/[...nextauth]";
 interface HomeProps {
   newsResults: any;
@@ -15,6 +17,7 @@ const Home = ({
   newsResults: { articles },
   usersResults: { results: users },
 }: HomeProps) => {
+  const isOpenCommentM = useRecoilValue(commentModalState);
   return (
     <div>
       <Head>
@@ -31,7 +34,7 @@ const Home = ({
         <Widgets articles={articles} users={users} />
 
         {/* {modals} */}
-        <CommentModal />
+        {isOpenCommentM && <CommentModal />}
       </main>
     </div>
   );
