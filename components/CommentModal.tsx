@@ -15,9 +15,12 @@ import {
   serverTimestamp,
   addDoc,
   collection,
+  onSnapshot,
 } from "firebase/firestore";
 import { db } from "@/firebase";
 import LoaderSVG from "./LoaderSVG";
+import Post from "./Post";
+import Comments from "./Comments";
 
 const CommentModal = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -25,6 +28,7 @@ const CommentModal = () => {
     useRecoilState<boolean>(commentModalState);
   const docId = useRecoilValue(docIdState);
   const [post, setPost] = useState<DocumentData>({});
+  const [comments, setComments] = useState<DocumentData[]>([]);
   const { data } = useSession();
   const [commentInput, setCommentInput] = useState<string>("");
 
@@ -41,10 +45,14 @@ const CommentModal = () => {
       .catch((err) => console.log(err.message))
       .finally(() => setLoading(false));
   };
-
+  const fetchComments = () => {
+    const commentsRef = collection(db, "posts", docId, "comments");
+    onSnapshot(commentsRef, (snapshot) => setComments(snapshot.docs));
+  };
   // get post
   useEffect(() => {
     fetchPost();
+    fetchComments();
   }, [docId, db]);
 
   // take comment text
@@ -59,12 +67,23 @@ const CommentModal = () => {
     await addDoc(collection(db, "posts", docId, "comments"), {
       text: commentInput,
       uid: userId,
+      name: data?.user?.name,
       username: data?.user.username,
       userImage: data?.user.image,
       timestamp: serverTimestamp(),
     });
     setCommentInput("");
   };
+
+  // tweet button status for disabling reply tweet btn
+  const tweetBtnStatus = () => {
+    if (commentInput.trim()) {
+      return false;
+    }
+    return true;
+  };
+
+  console.log("comments from modals", comments[0]?.data()?.userImage);
 
   return (
     <div className="absolute top-[20%] left-1/2 translate-x-[-50%] z-10">
@@ -114,7 +133,6 @@ const CommentModal = () => {
                 )}
               </div>
             </div>
-
             {/* {input box} */}
             <div className="mt-4">
               <div className="flex border-b border-gray-200 gap-2">
@@ -167,7 +185,7 @@ const CommentModal = () => {
 
                     <button
                       className="flex justify-center items-center h-8 w-20 rounded-full capitalize bg-blue-400 text-white font-bold shadow-md hover:brightness-95 disabled:opacity-50"
-                      // disabled={tweetBtnStatus()}
+                      disabled={tweetBtnStatus()}
                       onClick={handlerSubmit}
                     >
                       tweet
@@ -175,6 +193,18 @@ const CommentModal = () => {
                     </button>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* view comments section  */}
+            <div className="p-1">
+              <div>
+                <h4 className="capitalize text-sm">all comments</h4>
+              </div>
+              <div className="flex flex-col gap-4 mt-2 ml-2">
+                {comments.map((comment, index) => (
+                  <Comments key={index} comment={comment} />
+                ))}
               </div>
             </div>
           </div>
