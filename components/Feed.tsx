@@ -8,6 +8,7 @@ import Post from "./Post";
 import {
   collection,
   DocumentData,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
@@ -15,16 +16,32 @@ import {
 import { db } from "@/firebase";
 import SidebarMenuItem from "./SidebarMenuItem";
 import { AnimatePresence, motion } from "framer-motion";
+import { useRecoilValue } from "recoil";
+import { postedState } from "@/atom/Posted";
 
 const Feed = () => {
   const [posts, setPosts] = useState<DocumentData[]>([]);
-  useEffect(() => {
-    onSnapshot(
-      query(collection(db, "posts"), orderBy("timestamp", "desc")),
-      (snapshop) => setPosts(snapshop.docs)
-    );
-  }, [db]);
+  const posted = useRecoilValue(postedState);
 
+  const postFetched = async () => {
+    await getDocs(
+      query(collection(db, "posts"), orderBy("timestamp", "desc"))
+    ).then((snapshot) => {
+      setPosts(snapshot.docs);
+    });
+  };
+  // fetch all posts
+  useEffect(() => {
+    // onSnapshot(
+    //   query(collection(db, "posts"), orderBy("timestamp", "desc")),
+    //   (snapshop) => setPosts(snapshop.docs)
+    // );
+    postFetched();
+
+    console.log("redrednderd the feed for posted");
+  }, [db, posted]);
+
+  console.log("posted value", posted);
   return (
     <div className="flex flex-col border border-gray-200 relative w-full">
       <div

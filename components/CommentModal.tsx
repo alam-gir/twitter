@@ -62,11 +62,11 @@ const CommentModal = () => {
 
   // sunmit reply tweet
   const handlerSubmit = async () => {
-    const userId = data?.user.uid as string;
+    // const userId = data?.user.uid as string;
 
     await addDoc(collection(db, "posts", docId, "comments"), {
       text: commentInput,
-      uid: userId,
+      uid: data?.user.uid,
       name: data?.user?.name,
       username: data?.user.username,
       userImage: data?.user.image,
@@ -82,8 +82,6 @@ const CommentModal = () => {
     }
     return true;
   };
-
-  console.log("comments from modals", comments[0]?.data()?.userImage);
 
   return (
     <div className="absolute top-[20%] left-1/2 translate-x-[-50%] z-10">
@@ -133,6 +131,7 @@ const CommentModal = () => {
                 )}
               </div>
             </div>
+
             {/* {input box} */}
             <div className="mt-4">
               <div className="flex border-b border-gray-200 gap-2">
@@ -202,8 +201,9 @@ const CommentModal = () => {
                 <h4 className="capitalize text-sm">all comments</h4>
               </div>
               <div className="flex flex-col gap-4 mt-2 ml-2">
+                <div className="absolute -z-10 h-full border-l ml-4 border-gray-200"></div>
                 {comments.map((comment, index) => (
-                  <Comments key={index} comment={comment} />
+                  <Comments key={index} comment={comment} docId={docId} />
                 ))}
               </div>
             </div>
