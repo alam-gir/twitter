@@ -1,4 +1,3 @@
-import { postedState } from "@/atom/Posted";
 import { db, storage } from "@/firebase";
 import {
   FaceSmileIcon,
@@ -24,7 +23,6 @@ const Input = () => {
   const imagePicker = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [posted, setPosted] = useRecoilState(postedState);
 
   const handlerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPostText(e.target.value);
@@ -62,9 +60,6 @@ const Input = () => {
     setSelectedImage(null);
     // stop loading
     setLoading(false);
-
-    // change state of posted for reRednder all posts in feed
-    setPosted(!posted);
   };
   const handlerImagePick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();

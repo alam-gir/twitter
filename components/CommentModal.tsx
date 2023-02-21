@@ -16,6 +16,8 @@ import {
   addDoc,
   collection,
   onSnapshot,
+  query,
+  orderBy,
 } from "firebase/firestore";
 import { db } from "@/firebase";
 import LoaderSVG from "./LoaderSVG";
@@ -47,7 +49,9 @@ const CommentModal = () => {
   };
   const fetchComments = () => {
     const commentsRef = collection(db, "posts", docId, "comments");
-    onSnapshot(commentsRef, (snapshot) => setComments(snapshot.docs));
+    onSnapshot(query(commentsRef, orderBy("timestamp", "desc")), (snapshot) =>
+      setComments(snapshot.docs)
+    );
   };
   // get post
   useEffect(() => {

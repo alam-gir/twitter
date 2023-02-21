@@ -7,42 +7,41 @@ import Input from "./Input";
 import Post from "./Post";
 import {
   collection,
+  deleteDoc,
+  doc,
   DocumentData,
-  getDocs,
   onSnapshot,
   orderBy,
   query,
+  setDoc,
 } from "firebase/firestore";
 import { db } from "@/firebase";
 import SidebarMenuItem from "./SidebarMenuItem";
 import { AnimatePresence, motion } from "framer-motion";
-import { useRecoilValue } from "recoil";
-import { postedState } from "@/atom/Posted";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 const Feed = () => {
   const [posts, setPosts] = useState<DocumentData[]>([]);
-  const posted = useRecoilValue(postedState);
+  const { data } = useSession();
 
-  const postFetched = async () => {
-    await getDocs(
-      query(collection(db, "posts"), orderBy("timestamp", "desc"))
-    ).then((snapshot) => {
-      setPosts(snapshot.docs);
-    });
-  };
   // fetch all posts
   useEffect(() => {
-    // onSnapshot(
-    //   query(collection(db, "posts"), orderBy("timestamp", "desc")),
-    //   (snapshop) => setPosts(snapshop.docs)
-    // );
-    postFetched();
+    onSnapshot(
+      query(collection(db, "posts"), orderBy("timestamp", "desc")),
+      (snapshop) => setPosts(snapshop.docs)
+    );
+  }, [db]);
 
-    console.log("redrednderd the feed for posted");
-  }, [db, posted]);
-
-  console.log("posted value", posted);
+  // react a post
+  const handlerReact = async (postId: string, isReacted: boolean) => {
+    const userId = data?.user.uid as string;
+    const docRef = doc(db, "posts", postId, "reacts", userId);
+    isReacted
+      ? await deleteDoc(docRef)
+      : await setDoc(docRef, {
+          username: userId,
+        });
+  };
   return (
     <div className="flex flex-col border border-gray-200 relative w-full">
       <div
@@ -81,7 +80,7 @@ const Feed = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 1 }}
               >
-                <Post key={index} post={post} />
+                <Post key={index} post={post} handlerReact={handlerReact} />
               </motion.div>
             ))}
           </AnimatePresence>

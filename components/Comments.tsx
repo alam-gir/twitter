@@ -14,6 +14,8 @@ import {
   doc,
   DocumentData,
   onSnapshot,
+  orderBy,
+  query,
   serverTimestamp,
 } from "firebase/firestore";
 import { useSession } from "next-auth/react";
@@ -43,8 +45,10 @@ const Comments = ({
       comment.id,
       "reply"
     );
-    onSnapshot(docRef, (snapshot) => setRetweetsReplys(snapshot.docs));
-  }, [db]);
+    onSnapshot(query(docRef, orderBy("timestamp", "desc")), (snapshot) =>
+      setRetweetsReplys(snapshot.docs)
+    );
+  }, [db, retweetInput]);
 
   // start writing reply
   const showReplyInput = () => {

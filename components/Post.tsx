@@ -23,8 +23,12 @@ import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import Moment from "react-moment";
 import { useRecoilState } from "recoil";
+interface PostI {
+  post?: DocumentData;
+  handlerReact: (postId: string, isReacted: boolean) => Promise<void>;
+}
 
-const Post = ({ post }: { post?: DocumentData }) => {
+const Post = ({ post, handlerReact }: PostI) => {
   const [reacts, setReacts] = useState<DocumentData[] | undefined>([]);
   const [comments, setComments] = useState<DocumentData[] | undefined>([]);
   const [isReacted, setReacted] = useState<boolean>(false);
@@ -50,17 +54,6 @@ const Post = ({ post }: { post?: DocumentData }) => {
   useEffect(() => {
     setReacted(reacts?.findIndex((react) => react.id === userId) !== -1);
   }, [reacts]);
-
-  // likes store and remove
-  const hadnlerReact = async () => {
-    const userId = data?.user.uid as string;
-    const docRef = doc(db, "posts", post?.id, "reacts", userId);
-    isReacted
-      ? await deleteDoc(docRef)
-      : await setDoc(docRef, {
-          username: userId,
-        });
-  };
 
   // delete a post
   const handlerDelete = async () => {
@@ -161,13 +154,13 @@ const Post = ({ post }: { post?: DocumentData }) => {
             {isReacted ? (
               <div>
                 <HeartIconSolid
-                  onClick={hadnlerReact}
+                  onClick={() => handlerReact(post?.id, isReacted)}
                   className=" text-[#e50914] h-9 w-9 p-2  hoverEffect hover:text-red-500 hover:bg-red-100"
                 />
               </div>
             ) : (
               <HeartIcon
-                onClick={hadnlerReact}
+                onClick={() => handlerReact(post?.id, isReacted)}
                 className="h-9 w-9 p-2 hoverEffect hover:text-red-500 hover:bg-red-100"
               />
             )}
