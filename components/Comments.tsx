@@ -10,6 +10,8 @@ import {
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   DocumentData,
   onSnapshot,
   serverTimestamp,
@@ -75,6 +77,16 @@ const Comments = ({
 
     setRetweetInput("");
     // setShowReply(false);
+  };
+
+  //delete comment
+  const handlerDelete = async () => {
+    const confirm = window.confirm("Are You Sure To Delete ?");
+
+    if (confirm) {
+      const docRef = doc(db, "posts", docId, "comments", comment.id);
+      await deleteDoc(docRef);
+    }
   };
 
   // submit button disability
@@ -143,7 +155,10 @@ const Comments = ({
 
           <div>
             {data?.user.uid === comment?.data()?.uid && (
-              <TrashIcon className="h-6 w-6 p-1 cursor-pointer hover:text-red-500" />
+              <TrashIcon
+                className="h-6 w-6 p-1 cursor-pointer hover:text-red-500"
+                onClick={handlerDelete}
+              />
             )}
           </div>
         </div>
