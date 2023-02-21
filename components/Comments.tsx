@@ -130,12 +130,8 @@ const Comments = ({
             {comment?.data()?.text}
           </p>
           {comment?.data()?.image && (
-            <div className=" bg-green-300 h-36 w-1/2">
-              <img
-                src={comment?.data()?.image}
-                alt=""
-                className="w-full h-full"
-              />
+            <div className="h-36 w-1/2 mt-1">
+              <img src={comment?.data()?.image} alt="" className="h-full" />
             </div>
           )}
         </div>

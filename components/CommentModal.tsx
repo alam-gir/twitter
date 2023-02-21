@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { commentModalState, docIdState } from "@/atom/CommentModalState";
 import {
   FaceSmileIcon,
@@ -18,11 +18,13 @@ import {
   onSnapshot,
   query,
   orderBy,
+  updateDoc,
 } from "firebase/firestore";
-import { db } from "@/firebase";
+import { db, storage } from "@/firebase";
 import LoaderSVG from "./LoaderSVG";
 import Post from "./Post";
 import Comments from "./Comments";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
 const CommentModal = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -33,6 +35,8 @@ const CommentModal = () => {
   const [comments, setComments] = useState<DocumentData[]>([]);
   const { data } = useSession();
   const [commentInput, setCommentInput] = useState<string>("");
+  const imagePicker = useRef<HTMLInputElement | null>(null);
+  const [retweetImage, setRetweetImage] = useState<string | null>(null);
 
   // request for get post
   const fetchPost = async () => {
@@ -67,8 +71,8 @@ const CommentModal = () => {
   // sunmit reply tweet
   const handlerSubmit = async () => {
     // const userId = data?.user.uid as string;
-
-    await addDoc(collection(db, "posts", docId, "comments"), {
+    const docRef = collection(db, "posts", docId, "comments");
+    const commentRef = await addDoc(docRef, {
       text: commentInput,
       uid: data?.user.uid,
       name: data?.user?.name,
@@ -76,12 +80,53 @@ const CommentModal = () => {
       userImage: data?.user.image,
       timestamp: serverTimestamp(),
     });
+
+    // set images
+    if (retweetImage) {
+      const storageRef = ref(
+        storage,
+        `posts/${docId}/comments/${docRef.id}/image`
+      );
+      // upload image string
+      await uploadString(storageRef, retweetImage, "data_url").then(
+        async () => {
+          //get the download link of this image
+          await getDownloadURL(storageRef).then((url) => {
+            const commentRefWId = doc(
+              db,
+              "posts",
+              docId,
+              "comments",
+              commentRef.id
+            );
+            //update the comments  doc with image downloadLink
+            updateDoc(commentRefWId, { image: url });
+          });
+        }
+      );
+    }
+    // comment box reset
     setCommentInput("");
+    // image box reset
+    setRetweetImage(null);
+  };
+
+  // for picking image
+  const handlerImagePick = (e: ChangeEvent<HTMLInputElement>) => {
+    const reader = new FileReader();
+    if (e.target.files?.length) {
+      reader.readAsDataURL(e.target.files[0]);
+    }
+
+    reader.onload = (readerEvent) => {
+      const imageData: string = readerEvent.target?.result as string;
+      setRetweetImage(imageData);
+    };
   };
 
   // tweet button status for disabling reply tweet btn
   const tweetBtnStatus = () => {
-    if (commentInput.trim()) {
+    if (commentInput.trim() || retweetImage) {
       return false;
     }
     return true;
@@ -158,30 +203,30 @@ const CommentModal = () => {
                     />
                   </div>
                   {/* preview image section */}
-                  <div className={` relative flex justify-center w-full`}>
-                    {/* {selectedImage && (
-                    <>
-                    <XMarkIcon
-                    className={` ${
-                      loading && "hidden"
-                    } cursor-pointer absolute top-5 left-3 h-7 text-[#e50914] hover:bg-[rgba(0,0,0,0.4)] transition-all duration-200 bg-[rgba(0,0,0,0.3)] rounded-full`}
-                    // onClick={() => setSelectedImage(null)}
-                    />
-                    <img src={"selectedImage"} alt="" className="max-w-full" />
-                    </>
-                  )} */}
+                  <div className={` relative flex justify-left w-full`}>
+                    {retweetImage && (
+                      <>
+                        <XMarkIcon
+                          className={` ${
+                            loading && "hidden"
+                          } cursor-pointer absolute top-5 left-3 h-7 text-[#e50914] hover:bg-[rgba(0,0,0,0.4)] transition-all duration-200 bg-[rgba(0,0,0,0.3)] rounded-full`}
+                          onClick={() => setRetweetImage(null)}
+                        />
+                        <img src={retweetImage} alt="" className=" w-[18rem]" />
+                      </>
+                    )}
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="flex">
                       <PhotoIcon
                         className="h-9 w-9 hoverEffect p-1.5 text-sky-500 hover:text-sky-400"
-                        // onClick={() => imagePicker.current?.click()}
+                        onClick={() => imagePicker.current?.click()}
                       />
                       <input
                         type="file"
                         hidden
-                        // ref={imagePicker}
-                        // onChange={handlerImagePick}
+                        ref={imagePicker}
+                        onChange={handlerImagePick}
                       />
                       <FaceSmileIcon className="h-9 w-9 hoverEffect p-1.5 text-sky-500 hover:text-sky-400" />
                     </div>

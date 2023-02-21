@@ -14,7 +14,6 @@ import {
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { useSession } from "next-auth/react";
 import React, { useRef, useState } from "react";
-import { useRecoilState } from "recoil";
 import LoaderSVG from "./LoaderSVG";
 
 const Input = () => {
