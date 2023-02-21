@@ -44,7 +44,6 @@ const Comments = ({
     onSnapshot(docRef, (snapshot) => setRetweetsReplys(snapshot.docs));
   }, [db]);
 
-  console.log("all retreplys", retweetReplys);
   // start writing reply
   const showReplyInput = () => {
     setShowReply(!isShowReply);
@@ -220,7 +219,14 @@ const Comments = ({
       <div className="relative pl-4 mt-4 flex flex-col gap-3">
         <div className="absolute -z-10 h-full border-l ml-4 border-gray-200"></div>
         {retweetReplys.map((retweet, index) => {
-          return <SubComments key={index} comment={retweet} />;
+          return (
+            <SubComments
+              key={index}
+              retweet={retweet}
+              docId={docId}
+              commentId={comment?.id}
+            />
+          );
         })}
       </div>
     </div>

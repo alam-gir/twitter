@@ -60,8 +60,6 @@ const Post = ({ post }: { post?: DocumentData }) => {
       : await setDoc(docRef, {
           username: userId,
         });
-
-    console.log("working react btn");
   };
 
   // delete a post
