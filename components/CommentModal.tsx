@@ -37,6 +37,7 @@ const CommentModal = () => {
   const [commentInput, setCommentInput] = useState<string>("");
   const imagePicker = useRef<HTMLInputElement | null>(null);
   const [retweetImage, setRetweetImage] = useState<string | null>(null);
+  const [tweetBtnLoading, setTweetBtnLoading] = useState<boolean>(false);
 
   // request for get post
   const fetchPost = async () => {
@@ -68,8 +69,9 @@ const CommentModal = () => {
     setCommentInput(e.target.value);
   };
 
-  // sunmit reply tweet
+  // submit reply tweet
   const handlerSubmit = async () => {
+    setTweetBtnLoading(true);
     // const userId = data?.user.uid as string;
     const docRef = collection(db, "posts", docId, "comments");
     const commentRef = await addDoc(docRef, {
@@ -85,7 +87,7 @@ const CommentModal = () => {
     if (retweetImage) {
       const storageRef = ref(
         storage,
-        `posts/${docId}/comments/${docRef.id}/image`
+        `posts/${docId}/comments/${commentRef.id}/image`
       );
       // upload image string
       await uploadString(storageRef, retweetImage, "data_url").then(
@@ -109,6 +111,8 @@ const CommentModal = () => {
     setCommentInput("");
     // image box reset
     setRetweetImage(null);
+    //tweet loading stop
+    setTweetBtnLoading(false);
   };
 
   // for picking image
@@ -208,8 +212,8 @@ const CommentModal = () => {
                       <>
                         <XMarkIcon
                           className={` ${
-                            loading && "hidden"
-                          } cursor-pointer absolute top-5 left-3 h-7 text-[#e50914] hover:bg-[rgba(0,0,0,0.4)] transition-all duration-200 bg-[rgba(0,0,0,0.3)] rounded-full`}
+                            tweetBtnLoading && "hidden"
+                          } cursor-pointer absolute top-2 left-2 h-6 text-[#e50914] hover:bg-[rgba(0,0,0,0.4)] transition-all duration-200 bg-[rgba(0,0,0,0.3)] rounded-full`}
                           onClick={() => setRetweetImage(null)}
                         />
                         <img src={retweetImage} alt="" className=" w-[18rem]" />

@@ -14,6 +14,8 @@ const nextConfig = {
     GITHUB_CLIENT_SECRET: "95e66dd024a8ee66fe9fad88271c62f05602da46",
     NEXTAUTH_SECRET: "6ee+YVKfDv3azkcbRZTH0+J+gONHaCU7thWuiZfLr9Y=",
     RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED: "false",
+    GMAIL: "info.alamgirhussain@gmail.com",
+    GMAIL_APP_PASS: "bmtkyzhpcdhrhbuq",
   },
 };
 

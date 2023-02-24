@@ -1,4 +1,4 @@
-import { db } from "@/firebase";
+import { db, storage } from "@/firebase";
 import {
   ChatBubbleBottomCenterIcon,
   FaceSmileIcon,
@@ -6,6 +6,7 @@ import {
   PhotoIcon,
   ShareIcon,
   TrashIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import {
   addDoc,
@@ -17,10 +18,18 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadString,
+} from "firebase/storage";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
+import LoaderSVG from "./LoaderSVG";
 import SubComments from "./SubComments";
 
 const Comments = ({
@@ -34,6 +43,11 @@ const Comments = ({
   const [isShowReply, setShowReply] = useState<boolean>(false);
   const [retweetInput, setRetweetInput] = useState<string>("");
   const [retweetReplys, setRetweetsReplys] = useState<DocumentData[]>([]);
+  const imagePicker = useRef<HTMLInputElement | null>(null);
+  const [retweetReplyImage, setRetweetReplyImage] = useState<string | null>(
+    null
+  );
+  const [loading, setLoading] = useState<boolean>(false);
 
   // get all retweets reply
   useEffect(() => {
@@ -62,6 +76,7 @@ const Comments = ({
 
   // retweet reply submit
   const handlerSubmit = async () => {
+    setLoading(true);
     const docRef = collection(
       db,
       "posts",
@@ -70,7 +85,7 @@ const Comments = ({
       comment.id,
       "reply"
     );
-    await addDoc(docRef, {
+    const replyRef = await addDoc(docRef, {
       text: retweetInput,
       uid: data?.user?.uid,
       name: data?.user?.name,
@@ -79,8 +94,28 @@ const Comments = ({
       timestamp: serverTimestamp(),
     });
 
+    //sent image if available
+    if (retweetReplyImage) {
+      const storageRef = ref(
+        storage,
+        `posts/${docId}/comments/${comment?.id}/replys/${replyRef.id}/image`
+      );
+
+      await uploadString(storageRef, retweetReplyImage, "data_url").then(
+        async () => {
+          //getDownloadUrl
+          await getDownloadURL(storageRef).then((url) => {
+            // update doc with image url
+            updateDoc(replyRef, { image: url });
+          });
+        }
+      );
+    }
+
+    // empty box
     setRetweetInput("");
-    // setShowReply(false);
+    setRetweetReplyImage(null);
+    setLoading(false);
   };
 
   //delete comment
@@ -90,12 +125,34 @@ const Comments = ({
     if (confirm) {
       const docRef = doc(db, "posts", docId, "comments", comment.id);
       await deleteDoc(docRef);
+
+      //delete image if available
+      if (comment?.data()?.image) {
+        const imageRef = ref(
+          storage,
+          `posts/${docId}/comments/${comment.id}/image`
+        );
+        await deleteObject(imageRef);
+      }
     }
+  };
+
+  //image picked
+  const handlerImagePick = (e: ChangeEvent<HTMLInputElement>) => {
+    const reader = new FileReader();
+    if (e.target.files?.length) {
+      reader.readAsDataURL(e.target.files[0]);
+    }
+
+    reader.onload = (readerEvent) => {
+      const imageData: string = readerEvent.target?.result as string;
+      setRetweetReplyImage(imageData);
+    };
   };
 
   // submit button disability
   const tweetBtnStatus = () => {
-    if (retweetInput.trim()) {
+    if (retweetInput.trim() || retweetReplyImage) {
       return false;
     }
     return true;
@@ -188,30 +245,30 @@ const Comments = ({
                 />
               </div>
               {/* preview image section */}
-              <div className={` relative flex justify-center w-full`}>
-                {/* {selectedImage && (
-                    <>
+              <div className={` relative flex justify-left w-full`}>
+                {retweetReplyImage && (
+                  <>
                     <XMarkIcon
-                    className={` ${
-                      loading && "hidden"
-                    } cursor-pointer absolute top-5 left-3 h-7 text-[#e50914] hover:bg-[rgba(0,0,0,0.4)] transition-all duration-200 bg-[rgba(0,0,0,0.3)] rounded-full`}
-                    // onClick={() => setSelectedImage(null)}
+                      className={` ${
+                        loading && "hidden"
+                      } cursor-pointer absolute top-1 left-1 h-5 text-[#e50914] hover:bg-[rgba(0,0,0,0.4)] transition-all duration-200 bg-[rgba(0,0,0,0.3)] rounded-full`}
+                      onClick={() => setRetweetReplyImage(null)}
                     />
-                    <img src={"selectedImage"} alt="" className="max-w-full" />
-                    </>
-                  )} */}
+                    <img src={retweetReplyImage} alt="" className="w-[16rem]" />
+                  </>
+                )}
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex">
                   <PhotoIcon
                     className="h-9 w-9 hoverEffect p-1.5 text-sky-500 hover:text-sky-400"
-                    // onClick={() => imagePicker.current?.click()}
+                    onClick={() => imagePicker.current?.click()}
                   />
                   <input
                     type="file"
                     hidden
-                    // ref={imagePicker}
-                    // onChange={handlerImagePick}
+                    ref={imagePicker}
+                    onChange={handlerImagePick}
                   />
                   <FaceSmileIcon className="h-9 w-9 hoverEffect p-1.5 text-sky-500 hover:text-sky-400" />
                 </div>
@@ -221,8 +278,11 @@ const Comments = ({
                   disabled={tweetBtnStatus()}
                   onClick={handlerSubmit}
                 >
-                  replay tweet
-                  {/* {!loading ? "tweet" : <LoaderSVG color="fill-gray-300" />} */}
+                  {!loading ? (
+                    "replay tweet"
+                  ) : (
+                    <LoaderSVG color="fill-gray-300" />
+                  )}
                 </button>
               </div>
             </div>

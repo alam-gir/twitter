@@ -14,9 +14,11 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const Sidebar = () => {
   const { data } = useSession();
+  const router = useRouter()
   return (
     <div className="hidden sm:flex flex-col p-2 xl:items-start sticky top-0 h-screen w-auto ">
       {/* {twitter logo} */}
@@ -78,7 +80,7 @@ const Sidebar = () => {
       </div>
 
       {/* {mini profile} */}
-      <div className="hoverEffect flex items-center justify-center text-gray-700 xl:justify-start mt-auto">
+      <div className="hoverEffect flex items-center justify-center text-gray-700 xl:justify-start mt-auto" onClick={()=> router.push('/profile')}>
         <img
           src={data?.user?.image}
           alt="profileImg"

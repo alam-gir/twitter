@@ -1,4 +1,4 @@
-import { db } from "@/firebase";
+import { db, storage } from "@/firebase";
 import {
   ChatBubbleBottomCenterIcon,
   HeartIcon,
@@ -6,6 +6,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { deleteDoc, doc, DocumentData } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import { useSession } from "next-auth/react";
 import React from "react";
 import Moment from "react-moment";
@@ -38,6 +39,16 @@ const Comments = ({
         retweet?.id
       );
       await deleteDoc(docRef);
+
+      //delete image if available
+      if (retweet?.data()?.image) {
+        const storageRef = ref(
+          storage,
+          `posts/${docId}/comments/${commentId}/replys/${retweet?.id}/image`
+        );
+
+        await deleteObject(storageRef);
+      }
     }
   };
 
@@ -70,12 +81,8 @@ const Comments = ({
             {retweet?.data()?.text}
           </p>
           {retweet?.data()?.image && (
-            <div className=" bg-green-300 h-36 w-1/2">
-              <img
-                src={retweet?.data()?.image}
-                alt=""
-                className="w-full h-full"
-              />
+            <div className=" bg-green-300 w-[12rem] mt-1">
+              <img src={retweet?.data()?.image} alt="" className="w-full" />
             </div>
           )}
         </div>

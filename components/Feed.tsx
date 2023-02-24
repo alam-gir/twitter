@@ -10,6 +10,7 @@ import {
   deleteDoc,
   doc,
   DocumentData,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
@@ -30,16 +31,17 @@ const Feed = () => {
       query(collection(db, "posts"), orderBy("timestamp", "desc")),
       (snapshop) => setPosts(snapshop.docs)
     );
-  }, [db]);
+  }, []);
 
   // react a post
   const handlerReact = async (postId: string, isReacted: boolean) => {
     const userId = data?.user.uid as string;
+    const username = data?.user.username as string;
     const docRef = doc(db, "posts", postId, "reacts", userId);
     isReacted
       ? await deleteDoc(docRef)
       : await setDoc(docRef, {
-          username: userId,
+          username: username,
         });
   };
   return (

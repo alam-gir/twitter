@@ -1,3 +1,4 @@
+import { PostedState } from "@/atom/Posted";
 import { db, storage } from "@/firebase";
 import {
   FaceSmileIcon,

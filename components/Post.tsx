@@ -16,7 +16,6 @@ import {
   doc,
   DocumentData,
   onSnapshot,
-  setDoc,
 } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
 import { useSession } from "next-auth/react";
@@ -51,6 +50,7 @@ const Post = ({ post, handlerReact }: PostI) => {
     onSnapshot(docsRef, (snapshot) => setComments(snapshot.docs));
   }, [db]);
 
+  //set react status
   useEffect(() => {
     setReacted(reacts?.findIndex((react) => react.id === userId) !== -1);
   }, [reacts]);
