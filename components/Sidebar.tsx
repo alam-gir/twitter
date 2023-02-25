@@ -80,7 +80,10 @@ const Sidebar = () => {
       </div>
 
       {/* {mini profile} */}
-      <div className="hoverEffect flex items-center justify-center text-gray-700 xl:justify-start mt-auto" onClick={()=> router.push('/profile')}>
+      <div className="hoverEffect flex items-center justify-center text-gray-700 xl:justify-start mt-auto" onClick={()=> {
+        router.push('/profile')
+        console.log('should route changed')
+        }}>
         <img
           src={data?.user?.image}
           alt="profileImg"
